@@ -12,8 +12,8 @@ class AuthController extends Controller
     public function register(Request $request){
         $data = $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email',
-            'password' => ['required','min:8', 'regex:/[A-Z]/', 'unique:users', 'confirmed'],
+            'email' => 'required|email|unique:users',
+            'password' => ['required','min:8', 'regex:/[A-Z]/', 'confirmed'],
         ]);
 
         $user = User::create($data);
@@ -48,6 +48,10 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request){
-        return 'works';
+        $request->user()->tokens()->delete();
+
+        return [
+            'message' => 'You are logged out.'
+        ];
     }
 }
