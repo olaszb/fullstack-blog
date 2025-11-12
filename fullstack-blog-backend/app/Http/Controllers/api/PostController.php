@@ -13,7 +13,7 @@ class PostController extends Controller
     public function index(){
         $posts = Post::orderBy("created_at", "DESC")->paginate(10);
 
-        return $posts;
+        return response()->json($posts);
     }
 
     public function store(PostCreateRequest $request) {
@@ -25,7 +25,7 @@ class PostController extends Controller
         $data['user_id'] = 1;
         $data['slug'] = Str::slug($data['title']);
 
-        $post = Post::create($data);
+        $post = $request->user()->posts()->create($data);
 
         return $post;
     }

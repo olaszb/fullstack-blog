@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login';
+import { LoginComponent } from './components/login/login';
 import { privateGuard } from './guards/private-guard';
-import { RegisterComponent } from './pages/register/register';
+import { RegisterComponent } from './components/register/register';
 import { publicGuard } from './guards/public-guard';
-import { HomeComponent } from './pages/home/home';
-import { Redirect } from './pages/redirect/redirect';
+import { HomeComponent } from './components/home/home';
+import { Redirect } from './components/redirect/redirect';
 
 export const routes: Routes = [
     {

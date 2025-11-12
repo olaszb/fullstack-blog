@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
-import { Navbar } from "./pages/navbar/navbar";
+import { Navbar } from "./components/navbar/navbar";
 
 
 @Component({
