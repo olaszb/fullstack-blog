@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PostCreateRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -16,7 +17,16 @@ class PostController extends Controller
     }
 
     public function store(PostCreateRequest $request) {
-        
+        $data = $request->validated();
 
+        $imagePath = $data['image']->store('posts', 'public');
+        $data['image'] = $imagePath;
+        
+        $data['user_id'] = 1;
+        $data['slug'] = Str::slug($data['title']);
+
+        $post = Post::create($data);
+
+        return $post;
     }
 }
