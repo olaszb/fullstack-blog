@@ -7,9 +7,5 @@ import { Auth } from '../../services/auth';
   templateUrl: './home.html',
 })
 export class HomeComponent {
-  constructor(private auth: Auth, private router: Router) {}
-
-  logout(): void {
-    this.auth.logout().subscribe(() => this.router.navigate(['/login']));
-  }
+  
 }
