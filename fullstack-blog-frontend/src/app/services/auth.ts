@@ -7,7 +7,7 @@ import { Observable, tap } from 'rxjs';
 })
 export class Auth {
   private apiUrl = 'http://127.0.0.1:8000/api';
-  private tokenKey = 'auth_token';
+  private tokenKey = 'token';
   isLoggedIn: boolean;
 
   constructor(private http: HttpClient){

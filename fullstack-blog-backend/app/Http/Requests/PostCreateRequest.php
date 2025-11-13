@@ -11,7 +11,7 @@ class PostCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,8 +24,8 @@ class PostCreateRequest extends FormRequest
         return [
             "title"=> "required",
             "content" => "required",
-            "image" => "required|image|mimes:png,jpg,jpeg,svg,gif",
-            "category" => ["required","exists:categories,id"],
+            "image" => "image|mimes:png,jpg,jpeg,svg,gif",
+            "category_id" => ["required","exists:categories,id"],
             "published_at" => ["nullable, datetime"]
         ];
     }

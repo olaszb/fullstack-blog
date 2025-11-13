@@ -22,4 +22,6 @@ export class PostService {
   getPosts(): Observable<PaginatedPosts> {
     return this.http.get<PaginatedPosts>(this.apiUrl);
   }
+
+  
 }

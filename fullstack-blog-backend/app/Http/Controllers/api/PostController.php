@@ -19,14 +19,16 @@ class PostController extends Controller
     public function store(PostCreateRequest $request) {
         $data = $request->validated();
 
-        $imagePath = $data['image']->store('posts', 'public');
-        $data['image'] = $imagePath;
+        if($data['image']){
+            $imagePath = $data['image']->store('posts', 'public');
+            $data['image'] = $imagePath;
+        }
         
-        $data['user_id'] = 1;
+        $data['user_id'] = $request->user()->id;
         $data['slug'] = Str::slug($data['title']);
 
         $post = $request->user()->posts()->create($data);
 
-        return $post;
+        return response()->json(['message' => 'Post created successfully', 'post' => $post]);
     }
 }

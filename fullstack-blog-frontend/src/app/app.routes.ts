@@ -5,6 +5,7 @@ import { RegisterComponent } from './components/register/register';
 import { publicGuard } from './guards/public-guard';
 import { HomeComponent } from './components/home/home';
 import { Redirect } from './components/redirect/redirect';
+import { CreatePostComponent } from './components/create-post/create-post';
 
 export const routes: Routes = [
     {
@@ -30,4 +31,10 @@ export const routes: Routes = [
         component: HomeComponent,
         canActivate: [privateGuard],
     },
+    {
+        path: 'create-post',
+        pathMatch: 'full',
+        component: CreatePostComponent,
+        canActivate: [privateGuard],
+    }
 ];
