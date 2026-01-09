@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input:invalid,
+textarea:invalid,
+select:invalid {
+  box-shadow: none !important;
+  outline: none !important;
+}
