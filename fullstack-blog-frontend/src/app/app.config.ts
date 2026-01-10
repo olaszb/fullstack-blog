@@ -2,9 +2,9 @@ import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListen
   provideAppInitializer, inject
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
+import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
-import { HttpClientModule } from '@angular/common/http';
+// import { HttpClientModule } from '@angular/common/http';
 import { Auth } from './services/auth';
 import { tap, of, catchError } from 'rxjs';
 
@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    importProvidersFrom(HttpClientModule),
+    provideHttpClient(),
     provideAppInitializer(() => {
       const authService = inject(Auth);
       const token = authService.getToken();

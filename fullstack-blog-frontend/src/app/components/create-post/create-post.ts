@@ -1,14 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import EasyMDE from 'easymde';
 
 @Component({
   selector: 'app-create-post',
   templateUrl: './create-post.html',
+  standalone: true,
   imports: [FormsModule],
 })
-export class CreatePostComponent implements OnInit {
+export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild('markdownEditor') markdownEditor!: ElementRef;
+
+  easyMDE!: EasyMDE;
+
   post = {
     title: '',
     content: '',
@@ -24,6 +31,25 @@ export class CreatePostComponent implements OnInit {
 
   ngOnInit() {
     this.loadCategories();
+  }
+
+  ngAfterViewInit() {
+    this.easyMDE = new EasyMDE({
+        element: this.markdownEditor.nativeElement,
+        spellChecker: false, 
+        placeholder: "Write your cool blog post here...",
+    });
+
+    this.easyMDE.codemirror.on('change', () => {
+      this.post.content = this.easyMDE.value();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.easyMDE) {
+      this.easyMDE.toTextArea();
+      this.easyMDE.cleanup();
+    }
   }
 
   loadCategories() {
@@ -42,6 +68,10 @@ export class CreatePostComponent implements OnInit {
     this.error = '';
     this.message = '';
 
+    if(this.easyMDE) {
+        this.post.content = this.easyMDE.value();
+    }
+
     const formData = new FormData();
     formData.append('title', this.post.title);
     formData.append('content', this.post.content);
@@ -51,7 +81,6 @@ export class CreatePostComponent implements OnInit {
       formData.append('image', this.imageFile);
     }
 
-    // Get token from localStorage
     const token = localStorage.getItem('token');
 
     const headers = new HttpHeaders({
@@ -62,11 +91,14 @@ export class CreatePostComponent implements OnInit {
       .post('http://127.0.0.1:8000/api/post/create', formData, { headers })
       .subscribe({
         next: (res) => {
-          console.log(res);
           this.message = 'Post created successfully!';
           this.loading = false;
           this.post = { title: '', content: '', category_id: '' };
           this.imageFile = null;
+
+          if(this.easyMDE) {
+             this.easyMDE.value('');
+          }
 
           this.router.navigate(['/home']);
         },
@@ -76,7 +108,5 @@ export class CreatePostComponent implements OnInit {
           this.loading = false;
         },
       });
-
-
   }
 }
