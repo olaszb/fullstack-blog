@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { PostService } from '../../services/post';
 import { Post } from '../../models/post.model';
 import { DatePipe, SlicePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-posts',
   templateUrl: './posts.html',
-  imports: [DatePipe, SlicePipe]
+  imports: [SlicePipe, RouterLink]
 })
 export class PostsComponent implements OnInit {
   posts: Post[] = [];

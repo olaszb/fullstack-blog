@@ -11,15 +11,17 @@
          No posts available.
        </div>
    }
-@for(post of posts; track post.title){
+@for(post of posts; track post.id){
+  <a [routerLink]="['/post', post.slug]" class="block transition-transform hover:-translate-y-1">
+
     <div class="post-card border rounded-lg overflow-hidden shadow-sm mb-4">
       
       @if (post.featured_image_url) {
         <div class="relative h-64 overflow-hidden ">
           <img 
-            [src]="post.featured_image_url" 
-            [alt]="post.title"
-            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          [src]="post.featured_image_url" 
+          [alt]="post.title"
+          class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
           />
         </div>
         <div class="p-4">
@@ -34,10 +36,11 @@
           <span class="text-xs uppercase tracking-widest text-blue-500">Text Story</span>
         </div>
         <div class="p-4">
-          <p class="text-gray-700 italic">"{{ post.content | slice:0:100 }}..."</p>
+          <p class="text-gray-700 italic">"{{ post.excerpt }}"</p>
         </div>
       }
-
+      
     </div>
-}
+  </a>
+  }
 </div>

@@ -3,6 +3,7 @@ export interface Post {
   title: string;
   slug: string;
   content: string;
+  excerpt?: string;
   category_id: string;
   user_id: string;
   featured_image_url?: string;

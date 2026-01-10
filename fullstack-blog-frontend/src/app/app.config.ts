@@ -7,6 +7,7 @@ import { routes } from './app.routes';
 // import { HttpClientModule } from '@angular/common/http';
 import { Auth } from './services/auth';
 import { tap, of, catchError } from 'rxjs';
+import { provideMarkdown} from 'ngx-markdown';
 
 
 
@@ -16,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
+    provideMarkdown(),
     provideAppInitializer(() => {
       const authService = inject(Auth);
       const token = authService.getToken();

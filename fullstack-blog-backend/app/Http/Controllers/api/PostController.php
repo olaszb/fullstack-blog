@@ -38,10 +38,12 @@ class PostController extends Controller
 
         return response()->json(['message' => 'Post created successfully', 'post' => $post]);
     }
-
+    public function show($slug) {
+    // Find post or return 404
+    $post = Post::where('slug', $slug)->firstOrFail();
+    return response()->json($post);
+    }
     
-
-
     public function uploadImage(Request $request)
 {
     $request->validate([
