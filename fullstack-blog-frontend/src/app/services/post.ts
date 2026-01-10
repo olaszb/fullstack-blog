@@ -23,5 +23,9 @@ export class PostService {
     return this.http.get<PaginatedPosts>(this.apiUrl);
   }
 
+  getPostBySlug(slug: string): Observable<Post> {
+  return this.http.get<Post>(`${this.apiUrl}/${slug}`);
+  }
+
   
 }

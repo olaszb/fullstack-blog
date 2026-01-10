@@ -1,0 +1,15 @@
+@if (post) {
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+      <header class="mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">{{ post.title }}</h1>
+        <div class="text-sm text-gray-500">
+          Published on {{ post.created_at | date }}
+        </div>
+      </header>
+     
+    
+      <article class="markdown-container">
+        <markdown [data]="post.content"></markdown>
+      </article>
+    </div>
+}

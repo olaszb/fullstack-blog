@@ -6,6 +6,7 @@ import { publicGuard } from './guards/public-guard';
 import { HomeComponent } from './components/home/home';
 import { Redirect } from './components/redirect/redirect';
 import { CreatePostComponent } from './components/create-post/create-post';
+import { PostDetailComponent } from './components/post-detail/post-detail';
 
 export const routes: Routes = [
     {
@@ -36,5 +37,9 @@ export const routes: Routes = [
         pathMatch: 'full',
         component: CreatePostComponent,
         canActivate: [privateGuard],
+    },
+    {
+        path: 'post/:slug', 
+        component: PostDetailComponent,
     }
 ];
