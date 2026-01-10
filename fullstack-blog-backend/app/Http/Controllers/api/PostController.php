@@ -23,6 +23,13 @@ class PostController extends Controller
         //     $imagePath = $data['image']->store('posts', 'public');
         //     $data['image'] = $imagePath;
         // }
+
+        $pattern = '/\!\[.*?\]\((.*?)\)/';
+        if (preg_match($pattern, $data['content'], $matches)) {
+            $data['featured_image_url'] = $matches[1];
+        } else {
+            $data['featured_image_url'] = null;
+        }
         
         $data['user_id'] = $request->user()->id;
         $data['slug'] = Str::slug($data['title']);
