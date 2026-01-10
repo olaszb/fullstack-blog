@@ -18,5 +18,6 @@ Route::post('/register', [AuthController::class, 'register'])->name('auth.regist
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/post/create', [PostController::class,'store'])->name('post.store');
+    Route::post('/post/upload-image', [App\Http\Controllers\api\PostController::class, 'uploadImage']);
     Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');    
 });

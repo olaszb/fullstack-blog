@@ -21,7 +21,6 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     content: '',
     category_id: '',
   };
-  imageFile: File | null = null;
   categories: any[] = [];
   loading = false;
   message = '';
@@ -37,12 +36,36 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     this.easyMDE = new EasyMDE({
         element: this.markdownEditor.nativeElement,
         spellChecker: false, 
-        placeholder: "Write your cool blog post here...",
+        placeholder: "Write your cool blog post here... (Drag & Drop images!)",
+
+        uploadImage: true,
+        imageUploadFunction: (file, onSuccess, onError) => {
+          this.uploadImageToBackend(file, onSuccess, onError);
+        },
     });
 
     this.easyMDE.codemirror.on('change', () => {
       this.post.content = this.easyMDE.value();
     });
+  }
+
+  uploadImageToBackend(file: File, onSuccess: (url: string) => void, onError: (error: string) => void) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    this.http.post<{ url: string }>('http://127.0.0.1:8000/api/post/upload-image', formData, { headers })
+      .subscribe({
+        next: (response) => {
+          onSuccess(response.url);
+        },
+        error: (err) => {
+          console.error(err);
+          onError('Image upload failed. Too large?');
+        }
+      });
   }
 
   ngOnDestroy() {
@@ -59,9 +82,6 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onFileSelected(event: any) {
-    this.imageFile = event.target.files[0];
-  }
 
   onSubmit() {
     this.loading = true;
@@ -77,9 +97,6 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     formData.append('content', this.post.content);
     formData.append('category_id', this.post.category_id);
 
-    if (this.imageFile) {
-      formData.append('image', this.imageFile);
-    }
 
     const token = localStorage.getItem('token');
 
@@ -94,7 +111,6 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
           this.message = 'Post created successfully!';
           this.loading = false;
           this.post = { title: '', content: '', category_id: '' };
-          this.imageFile = null;
 
           if(this.easyMDE) {
              this.easyMDE.value('');
