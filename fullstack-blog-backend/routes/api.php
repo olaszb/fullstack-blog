@@ -22,5 +22,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/post/create', [PostController::class,'store'])->name('post.store');
     Route::post('/post/upload-image', [App\Http\Controllers\api\PostController::class, 'uploadImage']);
     Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
-    Route::put('/posts/{post}', [PostController::class, 'update'])->name('post.update');    
+    Route::put('/posts/{post}', [PostController::class, 'update'])->name('post.update');
+    Route::get('/user/posts', [PostController::class, 'userPosts'])->name('user.posts');   
 });

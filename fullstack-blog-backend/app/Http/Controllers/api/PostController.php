@@ -86,4 +86,13 @@ class PostController extends Controller
             'post' => $post,
         ]);
     }
+
+    public function userPosts(Request $request){
+        $posts = $request->user()->posts()->latest()->get();
+
+        return response()->json([
+            'status' => 'success',
+            'posts' => $posts,
+        ]);
+    }
 }
