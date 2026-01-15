@@ -1,0 +1,124 @@
+<div class="max-w-6xl mx-auto mt-10 px-4 pb-20">
+  <div class="mb-8 border-b border-gray-200 pb-4">
+    <h1 class="text-3xl font-bold text-gray-900">My Dashboard</h1>
+    <p class="text-gray-500 mt-1">Manage your articles and content</p>
+  </div>
+
+  @if(loading){
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+    @for(i of [1,2,3]; track i) {
+    <div class="h-64 bg-gray-200 rounded-lg"></div>
+    }
+  </div>
+  } @if(error){
+  <div class="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100 mb-6">
+    {{ error }}
+  </div>
+  } @if(!loading && posts.length === 0){
+  <div class="text-center py-20 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+    <div class="text-6xl mb-4">✍️</div>
+    <h3 class="text-lg font-medium text-gray-900">No posts yet</h3>
+    <p class="text-gray-500 mb-6">You haven't written any articles yet.</p>
+    <a routerLink="/create-post" class="text-blue-600 font-medium hover:underline"
+      >Start writing now &rarr;</a
+    >
+  </div>
+  }
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for(post of posts; track post.id){
+    <div
+      class="group flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden h-full"
+    >
+      <a
+        [routerLink]="['/post', post.slug]"
+        class="relative h-48 overflow-hidden bg-gray-100 block cursor-pointer"
+      >
+        @if (post.featured_image_url) {
+        <img
+          [src]="post.featured_image_url"
+          [alt]="post.title"
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        } @else {
+        <div
+          class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200"
+        >
+          <span class="text-4xl text-gray-300">📝</span>
+        </div>
+        }
+      </a>
+
+      <div class="p-5 flex flex-col flex-grow">
+        <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
+          <span>{{ post.created_at || post.published_at | date : 'mediumDate' }}</span>
+          <span
+            class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
+            >Published</span
+          >
+        </div>
+
+        <a [routerLink]="['/post', post.slug]" class="block">
+          <h3
+            class="text-xl font-bold text-gray-900 mb-2 leading-tight hover:text-blue-600 transition-colors"
+          >
+            {{ post.title }}
+          </h3>
+        </a>
+
+        <p class="text-gray-600 text-sm line-clamp-2 mb-4 flex-grow">
+          {{ post.excerpt || 'No description available.' }}
+        </p>
+
+        <div class="pt-4 border-t border-gray-50 mt-auto flex gap-3">
+          <a
+            [routerLink]="['/edit-post', post.slug]"
+            class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-800 transition-colors text-sm font-medium"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="w-4 h-4"
+            >
+              <path
+                d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
+              />
+              <path
+                d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
+              />
+            </svg>
+            Edit
+          </a>
+
+          <a
+            [routerLink]="['/post', post.slug]"
+            class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            title="View Post"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

@@ -39,4 +39,8 @@ export class PostService {
     formData.append('image', image);
     return this.http.post<{ url: string }>(`${this.baseUrl}/post/upload-image`, formData);
   }
+
+  getUserPosts(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/user/posts`);
+  }
 }

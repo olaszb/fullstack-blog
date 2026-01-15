@@ -5,15 +5,13 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class Routing {
-    constructor(private router: Router) {
+  constructor(private router: Router) {}
 
-  }
-
-  routeToLogin(){
+  routeToLogin() {
     this.router.navigateByUrl(`/login`);
   }
 
-    routeToHome(){
+  routeToHome() {
     this.router.navigateByUrl(`/home`);
   }
 }
