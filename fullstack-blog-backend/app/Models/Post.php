@@ -15,13 +15,22 @@ class Post extends Model
         'title',
         'slug',
         'content',
-        'featured_image_url',
+        'thumbnail',
         'category_id',
         'user_id',
         'published_at'
     ];
 
-    protected $appends = ['excerpt'];
+    protected $appends = ['excerpt', 'thumbnail_url'];
+
+    public function getThumbnailUrlAttribute()
+    {
+        if ($this->thumbnail) {
+            return asset('storage/' . $this->thumbnail);            
+        }
+        
+        return null;
+    }
 
     public function getExcerptAttribute()
     {
