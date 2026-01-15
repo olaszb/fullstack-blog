@@ -86,4 +86,58 @@ class PostController extends Controller
             'post' => $post,
         ]);
     }
+
+    public function userPosts(Request $request){
+        $posts = $request->user()->posts()->latest()->get();
+
+        return response()->json([
+            'status' => 'success',
+            'posts' => $posts,
+        ]);
+    }
+
+    public function destroy(Post $post){
+        Gate::authorize('delete', Post::class);
+
+        $post->delete();
+
+        return response()->json(['message' => 'Post archived successfully']);
+    }
+
+    public function archived(Request $request){
+        $posts = $request->user()->posts()->onlyTrashed()->latest()->get();
+
+        return response()->json([
+            'status' => 'success',
+            'posts' => $posts,
+        ]);
+    }
+
+    public function forceDelete($id){
+        $post = Post::withTrashed()->findOrFail($id);
+
+        if ($post->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if($post->thumbnail){
+            Storage::disk('public')->delete($post->thumbnail);
+        }
+
+        $post->forceDelete();
+
+        return response()->json(['message' => 'Post permanently deleted']);
+    }
+
+    public function restore($id){
+        $post = Post::withTrashed()->findOrFail($id);
+
+        if ($post->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $post->restore();
+
+        return response()->json(['message' => 'Post restored successfully!']);
+    }
 }
