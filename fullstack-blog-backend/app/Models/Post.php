@@ -18,7 +18,6 @@ class Post extends Model
         'thumbnail',
         'category_id',
         'user_id',
-        'published_at'
     ];
 
     protected $appends = ['excerpt', 'thumbnail_url'];
