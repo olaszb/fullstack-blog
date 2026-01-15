@@ -4,14 +4,23 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostCreateRequest;
+use App\Http\Requests\PostUpdateRequest;
 use App\Models\Post;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
+
+    
 
 class PostController extends Controller
 {
+    protected $pagination_limit = 9;
+
+
     public function index(){
-        $posts = Post::orderBy("created_at", "DESC")->paginate(10);
+        $posts = Post::orderBy("created_at", "DESC")->paginate($this->pagination_limit);
 
         return response()->json($posts);
     }
@@ -44,7 +53,7 @@ class PostController extends Controller
     }
     
     public function uploadImage(Request $request)
-{
+    {
     $request->validate([
         'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
@@ -58,5 +67,83 @@ class PostController extends Controller
     }
 
     return response()->json(['error' => 'No image uploaded'], 400);
-}
+    }
+
+    public function update(PostUpdateRequest $request, Post $post){
+        Gate::authorize('update', Post::class);
+        $data = $request->validated();
+
+        if($request->hasFile('thumbnail')){
+            if($post->thumbnail){
+                Storage::disk('public')->delete($post->thumbnail);
+            }
+
+            $data['thumbnail'] = $request->file('thumbnail')->store('posts', 'public');
+        }
+
+        if ($post->title !== $data['title']) {
+        $data['slug'] = Str::slug($data['title']);
+        }
+
+        $post->update($data);
+
+        return response()->json([
+            'message' => 'Post updated successfully!',
+            'post' => $post,
+        ]);
+    }
+
+    public function userPosts(Request $request){
+        $posts = $request->user()->posts()->latest()->get()->paginate($this->pagination_limit);
+
+        return response()->json([
+            'status' => 'success',
+            'posts' => $posts,
+        ]);
+    }
+
+    public function destroy(Post $post){
+        Gate::authorize('delete', Post::class);
+
+        $post->delete();
+
+        return response()->json(['message' => 'Post archived successfully']);
+    }
+
+    public function archived(Request $request){
+        $posts = $request->user()->posts()->onlyTrashed()->latest()->get()->paginate($this->pagination_limit);
+
+        return response()->json([
+            'status' => 'success',
+            'posts' => $posts,
+        ]);
+    }
+
+    public function forceDelete($id){
+        $post = Post::withTrashed()->findOrFail($id);
+
+        if ($post->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if($post->thumbnail){
+            Storage::disk('public')->delete($post->thumbnail);
+        }
+
+        $post->forceDelete();
+
+        return response()->json(['message' => 'Post permanently deleted']);
+    }
+
+    public function restore($id){
+        $post = Post::withTrashed()->findOrFail($id);
+
+        if ($post->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $post->restore();
+
+        return response()->json(['message' => 'Post restored successfully!']);
+    }
 }
