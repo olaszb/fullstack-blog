@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { PostService } from '../../services/post';
 import EasyMDE from 'easymde';
 
 @Component({
@@ -11,7 +11,6 @@ import EasyMDE from 'easymde';
   imports: [FormsModule],
 })
 export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @ViewChild('markdownEditor') markdownEditor!: ElementRef;
 
   easyMDE!: EasyMDE;
@@ -26,7 +25,7 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   error = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private postService: PostService, private router: Router) {}
 
   ngOnInit() {
     this.loadCategories();
@@ -34,14 +33,24 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.easyMDE = new EasyMDE({
-        element: this.markdownEditor.nativeElement,
-        spellChecker: false, 
-        placeholder: "Write your cool blog post here... (Drag & Drop images!)",
+      element: this.markdownEditor.nativeElement,
+      spellChecker: false,
+      placeholder: 'Write your cool blog post here... (Drag & Drop images!)',
+      status: ['autosave', 'lines', 'words', 'cursor'],
 
-        uploadImage: true,
-        imageUploadFunction: (file, onSuccess, onError) => {
-          this.uploadImageToBackend(file, onSuccess, onError);
-        },
+      toolbar: [
+          "bold", "italic", "heading", "|", 
+          "quote", "unordered-list", "ordered-list", "|",
+          "link", "image", "|",
+          "preview", "side-by-side", "fullscreen", "|",
+          "guide"
+      ],
+      minHeight: "200px",
+
+      uploadImage: true,
+      imageUploadFunction: (file, onSuccess, onError) => {
+        this.uploadImageToBackend(file, onSuccess, onError);
+      },
     });
 
     this.easyMDE.codemirror.on('change', () => {
@@ -50,22 +59,13 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   uploadImageToBackend(file: File, onSuccess: (url: string) => void, onError: (error: string) => void) {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
-    this.http.post<{ url: string }>('http://127.0.0.1:8000/api/post/upload-image', formData, { headers })
-      .subscribe({
-        next: (response) => {
-          onSuccess(response.url);
-        },
+    this.postService.uploadImage(file).subscribe({
+        next: (response) => onSuccess(response.url),
         error: (err) => {
-          console.error(err);
-          onError('Image upload failed. Too large?');
+            console.error(err);
+            onError('Upload failed. Image might be too large.');
         }
-      });
+    });
   }
 
   ngOnDestroy() {
@@ -76,51 +76,43 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadCategories() {
-    this.http.get<any[]>('http://127.0.0.1:8000/api/categories').subscribe({
+    this.postService.getCategories().subscribe({
       next: (res) => (this.categories = res),
       error: (err) => console.error('Failed to load categories', err),
     });
   }
 
-
   onSubmit() {
-    this.loading = true;
     this.error = '';
-    this.message = '';
 
-    if(this.easyMDE) {
-        this.post.content = this.easyMDE.value();
+    if (!this.post.title.trim()) {
+        this.error = "Please enter a title.";
+        return;
     }
+    const content = this.easyMDE.value();
+    if (!content.trim()) {
+        this.error = "The post content cannot be empty.";
+        return;
+    }
+    if (!this.post.category_id) {
+        this.error = "Please select a category.";
+        return;
+    }
+
+    this.loading = true;
 
     const formData = new FormData();
     formData.append('title', this.post.title);
-    formData.append('content', this.post.content);
+    formData.append('content', content);
     formData.append('category_id', this.post.category_id);
 
-
-    const token = localStorage.getItem('token');
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    this.http
-      .post('http://127.0.0.1:8000/api/post/create', formData, { headers })
-      .subscribe({
-        next: (res) => {
-          this.message = 'Post created successfully!';
-          this.loading = false;
-          this.post = { title: '', content: '', category_id: '' };
-
-          if(this.easyMDE) {
-             this.easyMDE.value('');
-          }
-
+    this.postService.createPost(formData).subscribe({
+        next: () => {
           this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error(err);
-          this.error = 'Failed to create post.';
+          this.error = 'Something went wrong. Please try again.';
           this.loading = false;
         },
       });

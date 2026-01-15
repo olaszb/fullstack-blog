@@ -1,45 +1,61 @@
-<div class="max-w-3xl mx-auto mt-10">
-  <h2 class="text-2xl font-semibold mb-4">Latest Posts</h2>
-   @if(loading){
-       <div class="text-gray-500">Loading posts...</div>
-   }
-   @if(error){
-       <div class="text-red-500">{{ error }}</div>
-   }
-   @if(!loading && posts.length === 0){
-       <div class="text-gray-400">
-         No posts available.
-       </div>
-   }
-@for(post of posts; track post.id){
-  <a [routerLink]="['/post', post.slug]" class="block transition-transform hover:-translate-y-1">
+@if(loading){
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+  @for(i of [1,2,3]; track i) {
+  <div class="h-64 bg-gray-200 rounded-lg"></div>
+  }
+</div>
+} @if(error){
+<div class="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
+  {{ error }}
+</div>
+} @if(!loading && posts.length === 0){
+<div class="text-center py-20 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+  <p class="text-gray-500 text-lg">No posts available yet.</p>
+</div>
+}
 
-    <div class="post-card border rounded-lg overflow-hidden shadow-sm mb-4">
-      
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  @for(post of posts; track post.id){
+  <a
+    [routerLink]="['/post', post.slug]"
+    class="group flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full"
+  >
+    <div class="relative h-48 overflow-hidden bg-gray-100">
       @if (post.featured_image_url) {
-        <div class="relative h-64 overflow-hidden ">
-          <img 
-          [src]="post.featured_image_url" 
-          [alt]="post.title"
-          class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          />
-        </div>
-        <div class="p-4">
-          <h2 class="text-xl font-bold">{{ post.title }}</h2>
-          <p class="text-gray-600">Click to read more...</p>
-        </div>
-      } 
-      
-      @else {
-        <div class="p-8 bg-blue-50 border-b-1">
-          <h2 class="text-2xl font-serif font-bold text-blue-900">{{ post.title }}</h2>
-          <span class="text-xs uppercase tracking-widest text-blue-500">Text Story</span>
-        </div>
-        <div class="p-4">
-          <p class="text-gray-700 italic">"{{ post.excerpt }}"</p>
-        </div>
+      <img
+        [src]="post.featured_image_url"
+        [alt]="post.title"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      } @else {
+      <div
+        class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200"
+      >
+        <span class="text-4xl text-gray-300">📝</span>
+      </div>
       }
-      
+    </div>
+
+    <div class="p-5 flex flex-col flex-grow">
+      <div class="flex items-center text-xs text-gray-500 mb-2">
+        <span>{{ post.created_at || post.published_at | date : 'mediumDate' }}</span>
+      </div>
+
+      <h3
+        class="text-xl font-bold text-gray-900 mb-2 leading-tight group-hover:text-blue-600 transition-colors"
+      >
+        {{ post.title }}
+      </h3>
+
+      <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">
+        {{ post.excerpt || 'Click to read this amazing story...' }}
+      </p>
+
+      <div class="pt-4 border-t border-gray-50 mt-auto">
+        <span class="text-sm font-medium text-blue-600 group-hover:underline">
+          Read Article &rarr;
+        </span>
+      </div>
     </div>
   </a>
   }

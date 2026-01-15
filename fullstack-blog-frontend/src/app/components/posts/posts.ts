@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-posts',
   templateUrl: './posts.html',
-  imports: [SlicePipe, RouterLink]
+  imports: [RouterLink, DatePipe],
 })
 export class PostsComponent implements OnInit {
   posts: Post[] = [];

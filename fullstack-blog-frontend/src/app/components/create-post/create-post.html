@@ -1,24 +1,28 @@
-<div class="max-w-lg mx-auto mt-10 p-6 bg-white shadow rounded-lg">
-  <h2 class="text-2xl font-semibold mb-4">Create a New Post</h2>
+<div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-sm rounded-lg border border-gray-300">
+  <h2
+    class="mb-4 text-2xl font-bold text-gray-800 tracking-tight group-hover:text-blue-700 transition-colors"
+  >
+    Create a New <span class="text-blue-600">Post</span>
+  </h2>
 
   <form (ngSubmit)="onSubmit()" #postForm="ngForm" enctype="multipart/form-data">
     <div class="mb-4">
-      <label class="block mb-1 font-medium">Title</label>
+      <label class="block mb-2 font-medium text-lg">Title</label>
       <input
         type="text"
         name="title"
         [(ngModel)]="post.title"
         required
-        class="w-full border border-gray-300 rounded p-2"
+        class="w-full border border-gray-300 rounded p-2 px-4"
       />
     </div>
 
     <!-- Content -->
     <div class="mb-4">
-      <label class="block mb-1 font-medium">Content</label>
-      
+      <label class="block mb-2 font-medium text-lg">Content</label>
+
       <textarea
-        #markdownEditor 
+        #markdownEditor
         name="content"
         class="w-full border border-gray-300 rounded p-2"
         rows="10"
@@ -27,7 +31,7 @@
 
     <!-- Category -->
     <div class="mb-4">
-      <label class="block mb-1 font-medium">Category</label>
+      <label class="block mb-2 font-medium text-lg">Category</label>
       <select
         name="category_id"
         [(ngModel)]="post.category_id"
@@ -36,26 +40,25 @@
       >
         <option value="" disabled selected>Select a category</option>
         @for(category of categories; track category.name){
-            <option  [value]="category.id">
-              {{ category.name }}
-            </option>
+        <option [value]="category.id">
+          {{ category.name }}
+        </option>
         }
       </select>
     </div>
-    
 
     <button
       type="submit"
       [disabled]="loading"
-      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+      class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-all shadow-sm"
     >
       {{ loading ? 'Submitting...' : 'Create Post' }}
     </button>
 
     @if(message){
-        <div class="mt-3 text-green-600">{{ message }}</div>
-    }
-    @if(error){
-        <div class="mt-3 text-red-600">{{ error }}</div>
+    <div class="mt-3 text-green-600">{{ message }}</div>
+    } @if(error){
+    <div class="mt-3 text-red-600">{{ error }}</div>
     }
   </form>
+</div>
