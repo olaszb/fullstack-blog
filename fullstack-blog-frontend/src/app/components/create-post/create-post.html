@@ -1,0 +1,72 @@
+<div class="max-w-lg mx-auto mt-10 p-6 bg-white shadow rounded-lg">
+  <h2 class="text-2xl font-semibold mb-4">Create a New Post</h2>
+
+  <form (ngSubmit)="onSubmit()" #postForm="ngForm" enctype="multipart/form-data">
+    <div class="mb-4">
+      <label class="block mb-1 font-medium">Title</label>
+      <input
+        type="text"
+        name="title"
+        [(ngModel)]="post.title"
+        required
+        class="w-full border border-gray-300 rounded p-2"
+      />
+    </div>
+
+    <!-- Content -->
+    <div class="mb-4">
+      <label class="block mb-1 font-medium">Content</label>
+      <textarea
+        name="content"
+        [(ngModel)]="post.content"
+        required
+        class="w-full border border-gray-300 rounded p-2"
+        rows="5"
+      ></textarea>
+    </div>
+
+    <!-- Category -->
+    <div class="mb-4">
+      <label class="block mb-1 font-medium">Category</label>
+      <select
+        name="category_id"
+        [(ngModel)]="post.category_id"
+        required
+        class="w-full border border-gray-300 rounded p-2"
+      >
+        <option value="" disabled selected>Select a category</option>
+        @for(category of categories; track category.name){
+            <option  [value]="category.id">
+              {{ category.name }}
+            </option>
+        }
+      </select>
+    </div>
+
+    <!-- Image -->
+    <div class="mb-4">
+      <label class="block mb-1 font-medium">Image</label>
+      <input
+        type="file"
+        name="image"
+        (change)="onFileSelected($event)"
+        accept="image/*"
+        class="w-full border border-gray-300 rounded p-2"
+      />
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="loading"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+    >
+      {{ loading ? 'Submitting...' : 'Create Post' }}
+    </button>
+
+    @if(message){
+        <div class="mt-3 text-green-600">{{ message }}</div>
+    }
+    @if(error){
+        <div class="mt-3 text-red-600">{{ error }}</div>
+    }
+  </form>
