@@ -1,14 +1,14 @@
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { Auth } from '../services/auth';
-import { Routing } from '../services/routing';
 import { inject } from '@angular/core';
 
 export const publicGuard: CanActivateFn = (route, state) => {
   const authService = inject(Auth);
+  const router = inject(Router);
 
-  if(authService.isLoggedIn){
-    inject(Routing).routeToLogin();
+  if (authService.getToken()) {
+    return router.createUrlTree(['/home']);
   }
 
-  return !authService.isLoggedIn;
+  return true;
 };

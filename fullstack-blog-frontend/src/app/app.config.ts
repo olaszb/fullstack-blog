@@ -21,7 +21,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),
-    provideHttpClient(),
     provideMarkdown(),
     provideAppInitializer(() => {
       const authService = inject(Auth);
