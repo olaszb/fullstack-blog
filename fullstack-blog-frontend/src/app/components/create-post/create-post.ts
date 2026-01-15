@@ -21,9 +21,11 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     category_id: '',
   };
   categories: any[] = [];
+  thumbnailFile: File | null = null;
   loading = false;
   message = '';
   error = '';
+
 
   constructor(private postService: PostService, private router: Router) {}
 
@@ -68,6 +70,14 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  onThumbnailSelected(event: any){
+    const file = event.target.files[0];
+    if(file){
+      this.thumbnailFile = file;
+    }
+  }
+
+
   ngOnDestroy() {
     if (this.easyMDE) {
       this.easyMDE.toTextArea();
@@ -89,6 +99,11 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
         this.error = "Please enter a title.";
         return;
     }
+    if(!this.thumbnailFile){
+      this.error = "Please upload a thumbnail";
+      return;
+    }
+
     const content = this.easyMDE.value();
     if (!content.trim()) {
         this.error = "The post content cannot be empty.";
@@ -105,6 +120,7 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     formData.append('title', this.post.title);
     formData.append('content', content);
     formData.append('category_id', this.post.category_id);
+    formData.append('thumbnail', this.thumbnailFile);
 
     this.postService.createPost(formData).subscribe({
         next: () => {

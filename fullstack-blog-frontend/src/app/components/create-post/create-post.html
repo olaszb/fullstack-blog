@@ -16,6 +16,18 @@
         class="w-full border border-gray-300 rounded p-2 px-4"
       />
     </div>
+    <!-- Thumbnail -->
+    <div class="mb-4">
+      <label for="thumbnail" class="block mb-2 font-medium text-lg">Thumbnail</label>
+      <input
+        type="file"
+        id="thumbnail"
+        name="thumbnail"
+        (change)="onThumbnailSelected($event)"
+        required
+        class="w-full border border-gray-300 rounded p-2 px-4"
+      />
+    </div>
 
     <!-- Content -->
     <div class="mb-4">

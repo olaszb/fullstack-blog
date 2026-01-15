@@ -19,17 +19,16 @@ class PostController extends Controller
     public function store(PostCreateRequest $request) {
         $data = $request->validated();
 
-        // if($data['image']){
-        //     $imagePath = $data['image']->store('posts', 'public');
-        //     $data['image'] = $imagePath;
+        
+        $imagePath = $data['thumbnail']->store('posts', 'public');
+        $data['thumbnail'] = $imagePath;
+         
+        // $pattern = '/\!\[.*?\]\((.*?)\)/';
+        // if (preg_match($pattern, $data['content'], $matches)) {
+        //     $data['featured_image_url'] = $matches[1];
+        // } else {
+        //     $data['featured_image_url'] = null;
         // }
-
-        $pattern = '/\!\[.*?\]\((.*?)\)/';
-        if (preg_match($pattern, $data['content'], $matches)) {
-            $data['featured_image_url'] = $matches[1];
-        } else {
-            $data['featured_image_url'] = null;
-        }
         
         $data['user_id'] = $request->user()->id;
         $data['slug'] = Str::slug($data['title']);
@@ -40,8 +39,8 @@ class PostController extends Controller
     }
     public function show($slug) {
     // Find post or return 404
-    $post = Post::where('slug', $slug)->firstOrFail();
-    return response()->json($post);
+        $post = Post::where('slug', $slug)->firstOrFail();
+        return response()->json($post);
     }
     
     public function uploadImage(Request $request)

@@ -7,7 +7,16 @@
         </div>
       </header>
      
-    
+      @if(post.thumbnail_url){
+        <div class="mb-8">
+          <img
+            [src]="post.thumbnail_url"
+            [alt]="post.title"
+            class="w-full max-h-[500px] object-cover rounded-lg shadow-md"
+          >
+
+        </div>
+      }
       <article class="markdown-container">
         <markdown [data]="post.content"></markdown>
       </article>
