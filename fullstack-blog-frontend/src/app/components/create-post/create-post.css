@@ -1,0 +1,21 @@
+/* Fix for EasyMDE Fullscreen behind Navbar */
+::ng-deep .editor-toolbar.fullscreen,
+::ng-deep .CodeMirror-fullscreen,
+::ng-deep .editor-preview-side {
+  z-index: 100 !important; /* Higher than Navbar */
+}
+
+/* Make the editor area look cleaner */
+::ng-deep .CodeMirror {
+  border-radius: 0.5rem;
+  border-color: #e5e7eb; /* Tailwind gray-200 */
+}
+
+::ng-deep .editor-toolbar {
+  border-color: #e5e7eb;
+  opacity: 0.8;
+}
+
+::ng-deep .editor-toolbar:hover {
+  opacity: 1;
+}
