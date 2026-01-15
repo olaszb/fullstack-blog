@@ -3,6 +3,8 @@ export interface Post {
   title: string;
   slug: string;
   content: string;
+  thumbnail: string;
+  thumbnail_url?: string;
   excerpt?: string;
   category_id: string;
   user_id: string;
