@@ -16,10 +16,10 @@ return new class extends Migration
             $table->timestamps();
             $table->string('title');
             $table->string('slug')->unique();//for urls
-            $table->string('content');
+            $table->longText('content');
+            $table->string('featured_image_url')->nullable()->after('content');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('image')->nullable();
             $table->timestamp('published_at')->nullable();
         });
     }

@@ -21,7 +21,6 @@ class PostFactory extends Factory
         return [
             'title' => $title,
             'slug' => \Illuminate\Support\Str::slug($title),
-            'image' => fake()->imageUrl(),
             'content' => fake()->paragraph(5),
             'category_id' => Category::inRandomOrder()->first()->id,
             'user_id' => 1,

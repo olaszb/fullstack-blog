@@ -15,8 +15,11 @@ Route::get('/posts', [PostController::class, 'index'])->name('post.index');
 Route::get('/categories', [CategoryController::class, 'index'])->name('category.index');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+Route::get('/posts/{slug}', [PostController::class, 'show']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/post/create', [PostController::class,'store'])->name('post.store');
+    Route::post('/post/upload-image', [App\Http\Controllers\api\PostController::class, 'uploadImage']);
     Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');    
 });
