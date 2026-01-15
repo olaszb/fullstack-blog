@@ -19,11 +19,11 @@ export class Navbar {
   logout(): void {
     this.auth.logout().subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/home']);
       },
       error: () => {
         this.auth.clearToken();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/home']);
       },
     });
   }

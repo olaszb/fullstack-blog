@@ -11,10 +11,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+
+    
+
 class PostController extends Controller
 {
+    protected $pagination_limit = 9;
+
+
     public function index(){
-        $posts = Post::orderBy("created_at", "DESC")->paginate(10);
+        $posts = Post::orderBy("created_at", "DESC")->paginate($this->pagination_limit);
 
         return response()->json($posts);
     }
@@ -88,7 +94,7 @@ class PostController extends Controller
     }
 
     public function userPosts(Request $request){
-        $posts = $request->user()->posts()->latest()->get();
+        $posts = $request->user()->posts()->latest()->get()->paginate($this->pagination_limit);
 
         return response()->json([
             'status' => 'success',
@@ -105,7 +111,7 @@ class PostController extends Controller
     }
 
     public function archived(Request $request){
-        $posts = $request->user()->posts()->onlyTrashed()->latest()->get();
+        $posts = $request->user()->posts()->onlyTrashed()->latest()->get()->paginate($this->pagination_limit);
 
         return response()->json([
             'status' => 'success',
