@@ -1,22 +1,26 @@
-import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection,
-  provideAppInitializer, inject
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection,
+  provideAppInitializer,
+  inject,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 // import { HttpClientModule } from '@angular/common/http';
 import { Auth } from './services/auth';
-import { tap, of, catchError } from 'rxjs';
-import { provideMarkdown} from 'ngx-markdown';
-
-
+import { of, catchError } from 'rxjs';
+import { provideMarkdown } from 'ngx-markdown';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),
-    provideHttpClient(),
     provideMarkdown(),
     provideAppInitializer(() => {
       const authService = inject(Auth);
@@ -30,8 +34,8 @@ export const appConfig: ApplicationConfig = {
           })
         );
       }
-      
+
       return of(null);
-    })
-  ]
+    }),
+  ],
 };
