@@ -7,7 +7,7 @@ export const publicGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   if (authService.getToken()) {
-    return router.createUrlTree(['/home']);
+    return router.createUrlTree(['/']);
   }
 
   return true;

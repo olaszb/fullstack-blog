@@ -4,7 +4,6 @@ import { privateGuard } from './guards/private-guard';
 import { RegisterComponent } from './components/register/register';
 import { publicGuard } from './guards/public-guard';
 import { HomeComponent } from './components/home/home';
-import { Redirect } from './components/redirect/redirect';
 import { CreatePostComponent } from './components/create-post/create-post';
 import { PostDetailComponent } from './components/post-detail/post-detail';
 import { MyPostsComponent } from './components/my-posts/my-posts';
@@ -13,7 +12,7 @@ import { EditPostComponent } from './components/edit-post/edit-post';
 export const routes: Routes = [
   {
     path: '',
-    component: Redirect,
+    component: HomeComponent,
     pathMatch: 'full',
   },
   {
@@ -27,11 +26,6 @@ export const routes: Routes = [
     pathMatch: 'full',
     component: RegisterComponent,
     canActivate: [publicGuard],
-  },
-  {
-    path: 'home',
-    pathMatch: 'full',
-    component: HomeComponent,
   },
   {
     path: 'create-post',
