@@ -14,7 +14,7 @@ export class Redirect {
 
   ngOnInit(): void {
     if (this.auth.isLoggedIn) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/']);
     } else {
       this.router.navigate(['/login']);
     }

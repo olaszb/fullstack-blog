@@ -12,6 +12,6 @@ export class Routing {
   }
 
   routeToHome() {
-    this.router.navigateByUrl(`/home`);
+    this.router.navigateByUrl(`/`);
   }
 }

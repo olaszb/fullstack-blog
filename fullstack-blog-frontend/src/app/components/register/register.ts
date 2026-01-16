@@ -38,7 +38,7 @@ export class RegisterComponent {
       .subscribe({
         next: () => {
           this.loading = false;
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']);
         },
         error: (err) => {
           this.loading = false;
