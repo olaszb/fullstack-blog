@@ -21,7 +21,7 @@
     class="group flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full"
   >
     <div class="relative h-48 overflow-hidden bg-gray-100">
-      @if (post.thumbnail) {
+      @if (post.thumbnail_url) {
       <img
         [src]="post.thumbnail_url"
         [alt]="post.title"

@@ -11,33 +11,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-
-    
-
 class PostController extends Controller
 {
     protected $pagination_limit = 9;
 
-
     public function index(){
         $posts = Post::orderBy("created_at", "DESC")->paginate($this->pagination_limit);
-
         return response()->json($posts);
     }
 
     public function store(PostCreateRequest $request) {
         $data = $request->validated();
 
-        
-        $imagePath = $data['thumbnail']->store('posts', 'public');
-        $data['thumbnail'] = $imagePath;
-         
-        // $pattern = '/\!\[.*?\]\((.*?)\)/';
-        // if (preg_match($pattern, $data['content'], $matches)) {
-        //     $data['featured_image_url'] = $matches[1];
-        // } else {
-        //     $data['featured_image_url'] = null;
-        // }
+        if ($request->hasFile('thumbnail')) {
+             $data['thumbnail'] = $request->file('thumbnail')->store('posts', 'public');
+        }
         
         $data['user_id'] = $request->user()->id;
         $data['slug'] = Str::slug($data['title']);
@@ -46,12 +34,80 @@ class PostController extends Controller
 
         return response()->json(['message' => 'Post created successfully', 'post' => $post], 201);
     }
+
     public function show($slug) {
-    // Find post or return 404
         $post = Post::where('slug', $slug)->firstOrFail();
+        
+        if ($post->thumbnail && !filter_var($post->thumbnail, FILTER_VALIDATE_URL)) {
+            $post->thumbnail_url = asset('storage/' . $post->thumbnail);
+        }
+        
         return response()->json($post);
     }
+
+    public function showArchived($slug, Request $request) {
+        $post = Post::onlyTrashed()->where('slug', $slug)->firstOrFail();
+
+        if ($request->user()->id !== $post->user_id && $request->user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ($post->thumbnail && !filter_var($post->thumbnail, FILTER_VALIDATE_URL)) {
+            $post->thumbnail_url = asset('storage/' . $post->thumbnail);
+        }
+
+        return response()->json($post);
+    }
+
+    public function update(PostUpdateRequest $request, Post $post){
+        Gate::authorize('update', $post);
+
+        $data = $request->validated();
+
+        if($request->hasFile('thumbnail')){
+            if($post->thumbnail){
+                Storage::disk('public')->delete($post->thumbnail);
+            }
+            $data['thumbnail'] = $request->file('thumbnail')->store('posts', 'public');
+        }
+
+        if ($post->title !== $data['title']) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+
+        $post->update($data);
+
+        return response()->json([
+            'message' => 'Post updated successfully!',
+            'post' => $post,
+        ]);
+    }
+
+    public function destroy(Post $post){
+        Gate::authorize('delete', $post);
+        $post->delete();
+        return response()->json(['message' => 'Post archived successfully']);
+    }
     
+    public function userPosts(Request $request){
+        $posts = $request->user()->posts()
+                        ->withTrashed() 
+                        ->latest()
+                        ->paginate($this->pagination_limit);
+
+        $posts->getCollection()->transform(function ($post) {
+            if ($post->thumbnail && !filter_var($post->thumbnail, FILTER_VALIDATE_URL)) {
+                $post->thumbnail_url = asset('storage/' . $post->thumbnail);
+            }
+            return $post;
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'posts' => $posts,
+        ]);
+    }
+
     public function uploadImage(Request $request)
     {
     $request->validate([
@@ -67,47 +123,6 @@ class PostController extends Controller
     }
 
     return response()->json(['error' => 'No image uploaded'], 400);
-    }
-
-    public function update(PostUpdateRequest $request, Post $post){
-        Gate::authorize('update', Post::class);
-        $data = $request->validated();
-
-        if($request->hasFile('thumbnail')){
-            if($post->thumbnail){
-                Storage::disk('public')->delete($post->thumbnail);
-            }
-
-            $data['thumbnail'] = $request->file('thumbnail')->store('posts', 'public');
-        }
-
-        if ($post->title !== $data['title']) {
-        $data['slug'] = Str::slug($data['title']);
-        }
-
-        $post->update($data);
-
-        return response()->json([
-            'message' => 'Post updated successfully!',
-            'post' => $post,
-        ]);
-    }
-
-    public function userPosts(Request $request){
-        $posts = $request->user()->posts()->latest()->get()->paginate($this->pagination_limit);
-
-        return response()->json([
-            'status' => 'success',
-            'posts' => $posts,
-        ]);
-    }
-
-    public function destroy(Post $post){
-        Gate::authorize('delete', Post::class);
-
-        $post->delete();
-
-        return response()->json(['message' => 'Post archived successfully']);
     }
 
     public function archived(Request $request){
@@ -145,5 +160,31 @@ class PostController extends Controller
         $post->restore();
 
         return response()->json(['message' => 'Post restored successfully!']);
+    }
+
+    public function adminUserPosts(Request $request)
+    {
+        if ($post->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $users = User::with(['posts' => function($query) {
+            $query->withTrashed()->latest();
+        }])
+        ->has('posts')
+        ->get();
+
+        $users->each(function($user) {
+            $user->posts->each(function($post) {
+                 if ($post->thumbnail && !filter_var($post->thumbnail, FILTER_VALIDATE_URL)) {
+                    $post->thumbnail_url = asset('storage/' . $post->thumbnail);
+                }
+            });
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $users
+        ]);
     }
 }

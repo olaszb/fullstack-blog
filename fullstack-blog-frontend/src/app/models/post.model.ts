@@ -3,12 +3,13 @@ export interface Post {
   title: string;
   slug: string;
   content: string;
-  thumbnail: string;
-  thumbnail_url?: string;
   excerpt?: string;
   category_id: string;
   user_id: string;
   featured_image_url?: string;
+  thumbnail_url?: string;
+  published_at?: string;
   created_at?: string;
   updated_at?: string;
+  deleted_at?: string | null;
 }

@@ -44,4 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //force delete
     Route::delete('/posts/{id}/force', [PostController::class, 'forceDelete'])->name('post.forceDelete');
+
+    Route::get('/admin/posts-by-user', [PostController::class, 'adminUserPosts']);
+
+    Route::get('/posts/archived/{slug}', [PostController::class, 'showArchived']);
 });

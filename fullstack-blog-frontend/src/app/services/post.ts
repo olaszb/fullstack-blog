@@ -39,4 +39,33 @@ export class PostService {
     formData.append('image', image);
     return this.http.post<{ url: string }>(`${this.baseUrl}/post/upload-image`, formData);
   }
+
+  getUserPosts(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/user/posts`);
+  }
+
+  updatePost(id: number, data: FormData): Observable<any> {
+    data.append('_method', 'PUT');
+    return this.http.post(`${this.baseUrl}/posts/${id}`, data);
+  }
+
+  archivePost(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/posts/${id}`);
+  }
+
+  getAdminPostsGrouped(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/admin/posts-by-user`);
+  }
+
+  restorePost(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/posts/${id}/restore`, {});
+  }
+
+  deletePostPermanently(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/posts/${id}/force`);
+  }
+
+  getArchivedPostBySlug(slug: string): Observable<Post> {
+    return this.http.get<Post>(`${this.baseUrl}/posts/archived/${slug}`);
+  }
 }

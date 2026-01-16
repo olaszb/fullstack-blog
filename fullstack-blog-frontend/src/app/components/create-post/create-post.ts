@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PostService } from '../../services/post';
 import EasyMDE from 'easymde';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-create-post',
@@ -20,14 +21,20 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     content: '',
     category_id: '',
   };
+
   categories: any[] = [];
   thumbnailFile: File | null = null;
   loading = false;
   message = '';
   error = '';
 
+  imagePreview: SafeUrl | null = null;
 
-  constructor(private postService: PostService, private router: Router) {}
+  constructor(
+    private postService: PostService,
+    private router: Router,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {
     this.loadCategories();
@@ -41,13 +48,24 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
       status: ['autosave', 'lines', 'words', 'cursor'],
 
       toolbar: [
-          "bold", "italic", "heading", "|", 
-          "quote", "unordered-list", "ordered-list", "|",
-          "link", "image", "|",
-          "preview", "side-by-side", "fullscreen", "|",
-          "guide"
+        'bold',
+        'italic',
+        'heading',
+        '|',
+        'quote',
+        'unordered-list',
+        'ordered-list',
+        '|',
+        'link',
+        'image',
+        '|',
+        'preview',
+        'side-by-side',
+        'fullscreen',
+        '|',
+        'guide',
       ],
-      minHeight: "200px",
+      minHeight: '200px',
 
       uploadImage: true,
       imageUploadFunction: (file, onSuccess, onError) => {
@@ -60,23 +78,34 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  uploadImageToBackend(file: File, onSuccess: (url: string) => void, onError: (error: string) => void) {
+  uploadImageToBackend(
+    file: File,
+    onSuccess: (url: string) => void,
+    onError: (error: string) => void
+  ) {
     this.postService.uploadImage(file).subscribe({
-        next: (response) => onSuccess(response.url),
-        error: (err) => {
-            console.error(err);
-            onError('Upload failed. Image might be too large.');
-        }
+      next: (response) => onSuccess(response.url),
+      error: (err) => {
+        console.error(err);
+        onError('Upload failed. Image might be too large.');
+      },
     });
   }
 
-  onThumbnailSelected(event: any){
+  onThumbnailSelected(event: any) {
     const file = event.target.files[0];
-    if(file){
+    this.error = '';
+
+    if (file) {
       this.thumbnailFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(result);
+      };
+      reader.readAsDataURL(file);
     }
   }
-
 
   ngOnDestroy() {
     if (this.easyMDE) {
@@ -96,22 +125,22 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     this.error = '';
 
     if (!this.post.title.trim()) {
-        this.error = "Please enter a title.";
-        return;
+      this.error = 'Please enter a title.';
+      return;
     }
-    if(!this.thumbnailFile){
-      this.error = "Please upload a thumbnail";
+    if (!this.thumbnailFile) {
+      this.error = 'Please upload a thumbnail';
       return;
     }
 
     const content = this.easyMDE.value();
     if (!content.trim()) {
-        this.error = "The post content cannot be empty.";
-        return;
+      this.error = 'The post content cannot be empty.';
+      return;
     }
     if (!this.post.category_id) {
-        this.error = "Please select a category.";
-        return;
+      this.error = 'Please select a category.';
+      return;
     }
 
     this.loading = true;
@@ -123,14 +152,14 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
     formData.append('thumbnail', this.thumbnailFile);
 
     this.postService.createPost(formData).subscribe({
-        next: () => {
-          this.router.navigate(['/home']);
-        },
-        error: (err) => {
-          console.error(err);
-          this.error = 'Something went wrong. Please try again.';
-          this.loading = false;
-        },
-      });
+      next: () => {
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Something went wrong. Please try again.';
+        this.loading = false;
+      },
+    });
   }
 }
