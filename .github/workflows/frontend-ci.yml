@@ -1,0 +1,38 @@
+name: Angular CI
+
+on:
+  push:
+    branches: ["main", "integration"]
+    paths:
+      - 'fullstack-blog-frontend/**' 
+  pull_request:
+    branches: ["main", "integration"]
+    paths:
+      - 'fullstack-blog-frontend/**'
+
+jobs:
+  angular-build:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./fullstack-blog-frontend
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24' 
+          cache: 'npm'
+          cache-dependency-path: fullstack-blog-frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Check for Linting Errors
+        run: npm run lint --if-present
+
+      - name: Build Application
+        run: npm run build -- --configuration production

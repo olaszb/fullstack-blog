@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +23,14 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => Hash::make("Test1234")
+        ]);
+
+        User::factory()->create([
+            'name' => 'Super Admin',
+            'email' => 'a@a.a',
+            'password' => Hash::make("Admin1234"),
+            'role' => 'admin',
         ]);
 
         $categories = [

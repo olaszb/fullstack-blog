@@ -22,9 +22,9 @@ class PostFactory extends Factory
             'title' => $title,
             'slug' => \Illuminate\Support\Str::slug($title),
             'content' => fake()->paragraph(5),
+            'thumbnail' => null,
             'category_id' => Category::inRandomOrder()->first()->id,
             'user_id' => 1,
-            'published_at' => fake()->optional()->dateTime(),
         ];
     }
 }
