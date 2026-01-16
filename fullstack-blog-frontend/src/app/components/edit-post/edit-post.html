@@ -1,7 +1,74 @@
 <div class="max-w-4xl mx-auto mt-10 p-8 bg-white shadow-lg rounded-xl border border-gray-100 mb-20">
-  <div class="mb-8 pb-4 border-b border-gray-100">
+  <div
+    class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-4 border-b border-gray-100 gap-4"
+  >
+    <div class="flex gap-3">
+      @if(post.deleted_at) {
+      <button
+        type="button"
+        (click)="onRestore()"
+        class="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg text-sm font-medium transition-colors border border-green-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="w-4 h-4"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Restore Post
+      </button>
+
+      <button
+        type="button"
+        (click)="onForceDelete()"
+        class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors border border-red-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="w-4 h-4"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Delete Permanently
+      </button>
+      } @else {
+      <button
+        type="button"
+        (click)="onArchive()"
+        class="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg text-sm font-medium transition-colors border border-amber-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="w-4 h-4"
+        >
+          <path d="M2 3a1 1 0 00-1 1v1a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H2z" />
+          <path
+            fill-rule="evenodd"
+            d="M2 7.5h16l-.811 7.71a2 2 0 01-1.99 1.79H4.802a2 2 0 01-1.99-1.79L2 7.5zm5.22 1.72a.75.75 0 011.06 0L10 10.94l1.72-1.72a.75.75 0 111.06 1.06L11.06 12l1.72 1.72a.75.75 0 11-1.06 1.06L10 13.06l-1.72 1.72a.75.75 0 01-1.06-1.06L8.94 12l-1.72-1.72a.75.75 0 010-1.06z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Archive Post
+      </button>
+      }
+    </div>
+
     <h2 class="text-2xl font-bold text-gray-800 tracking-tight">
-      Create a New <span class="text-blue-600">Post</span>
+      Edit <span class="text-blue-600">Post</span>
     </h2>
   </div>
 
@@ -16,7 +83,7 @@
         [(ngModel)]="post.title"
         required
         class="w-full text-2xl font-bold text-gray-900 border-b-2 border-gray-200 focus:border-blue-600 focus:outline-none py-2 placeholder-gray-300 transition-colors"
-        placeholder="Enter a captivating title..."
+        placeholder="Post Title"
       />
     </div>
 
@@ -36,6 +103,13 @@
           >
             New
           </div>
+          } @else if(post.thumbnail_url || post.thumbnail) {
+          <img [src]="post.thumbnail_url || post.thumbnail" class="w-full h-full object-cover" />
+          <div
+            class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            Current
+          </div>
           } @else {
           <div class="w-full h-full flex items-center justify-center text-gray-400">
             <span class="text-2xl">📷</span>
@@ -53,7 +127,7 @@
             class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer file:cursor-pointer"
           />
           <p class="mt-2 text-xs text-gray-500">
-            Select a cover image for your article. Accepted formats: JPG, PNG.
+            Select a new image to replace the current one. Accepted formats: JPG, PNG.
           </p>
         </div>
       </div>
@@ -70,7 +144,7 @@
           required
           class="w-full bg-white border border-gray-300 rounded-lg p-3 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
         >
-          <option value="" disabled selected>Select a category</option>
+          <option value="" disabled>Select a category</option>
           @for(category of categories; track category.name){
           <option [value]="category.id">{{ category.name }}</option>
           }
@@ -94,7 +168,14 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-end pt-6 border-t border-gray-100">
+    <div class="flex items-center justify-end gap-4 border-t border-gray-100 pt-6">
+      <a
+        routerLink="/user/posts"
+        class="text-gray-500 hover:text-gray-700 font-medium px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        Cancel
+      </a>
+
       <button
         type="submit"
         [disabled]="loading"
@@ -121,21 +202,21 @@
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        Publishing... } @else {
-        <span>Publish Post</span>
+        Saving Changes... } @else {
+        <span>Update Post</span>
         }
       </button>
     </div>
 
     @if(message){
     <div
-      class="mt-4 p-4 bg-green-50 text-green-700 rounded-lg text-center font-medium border border-green-200"
+      class="mt-4 p-4 bg-green-50 text-green-700 rounded-lg text-center font-medium border border-green-200 flex items-center justify-center gap-2"
     >
       {{ message }}
     </div>
     } @if(error){
     <div
-      class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg text-center font-medium border border-red-200"
+      class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg text-center font-medium border border-red-200 flex items-center justify-center gap-2"
     >
       {{ error }}
     </div>
