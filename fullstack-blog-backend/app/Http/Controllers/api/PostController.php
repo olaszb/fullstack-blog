@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PostCreateRequest;
 use App\Http\Requests\PostUpdateRequest;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -32,7 +33,7 @@ class PostController extends Controller
 
         $post = $request->user()->posts()->create($data);
 
-        return response()->json(['message' => 'Post created successfully', 'post' => $post]);
+        return response()->json(['message' => 'Post created successfully', 'post' => $post], 201);
     }
 
     public function show($slug) {
@@ -80,7 +81,7 @@ class PostController extends Controller
         return response()->json([
             'message' => 'Post updated successfully!',
             'post' => $post,
-        ]);
+        ], 200);
     }
 
     public function destroy(Post $post){
@@ -162,7 +163,7 @@ class PostController extends Controller
         return response()->json(['message' => 'Post restored successfully!']);
     }
 
-    public function adminUserPosts(Request $request)
+    public function adminUserPosts(Request $request, Post $post)
     {
         if ($post->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
             return response()->json(['error' => 'Unauthorized'], 403);
