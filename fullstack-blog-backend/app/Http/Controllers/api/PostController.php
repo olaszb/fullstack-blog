@@ -44,7 +44,7 @@ class PostController extends Controller
 
         $post = $request->user()->posts()->create($data);
 
-        return response()->json(['message' => 'Post created successfully', 'post' => $post]);
+        return response()->json(['message' => 'Post created successfully', 'post' => $post], 201);
     }
     public function show($slug) {
     // Find post or return 404
