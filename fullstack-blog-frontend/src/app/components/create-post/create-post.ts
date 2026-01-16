@@ -153,7 +153,7 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.postService.createPost(formData).subscribe({
       next: () => {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error(err);

@@ -26,6 +26,13 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make("Test1234")
         ]);
 
+        User::factory()->create([
+            'name' => 'Super Admin',
+            'email' => 'a@a.a',
+            'password' => Hash::make("Admin1234"),
+            'role' => 'admin',
+        ]);
+
         $categories = [
             'Technology',
             'Health',
