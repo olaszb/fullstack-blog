@@ -24,6 +24,9 @@ export class MyPostsComponent implements OnInit {
   error = '';
   isAdmin = false;
 
+  currentPage = 1;
+  lastPage = 1;
+
   constructor(private postService: PostService, private auth: Auth) {}
 
   ngOnInit(): void {
@@ -37,9 +40,13 @@ export class MyPostsComponent implements OnInit {
   }
 
   loadUserView() {
-    this.postService.getUserPosts().subscribe({
+    this.postService.getUserPosts(this.currentPage).subscribe({
       next: (response: any) => {
-        const posts = response.posts?.data || [];
+        const paginationData = response.posts;
+        const posts = paginationData?.data || [];
+        
+        this.currentPage = paginationData?.current_page || 1;
+        this.lastPage = paginationData?.last_page || 1;
 
         this.postGroups = [{ authorName: 'My Posts', posts: posts }];
         this.loading = false;
@@ -74,5 +81,13 @@ export class MyPostsComponent implements OnInit {
     // Fallback if backend doesn't send thumbnail_url but sends thumbnail
     if (post.thumbnail) return `http://127.0.0.1:8000/storage/${post.thumbnail}`;
     return null;
+  }
+
+  changePage(newPage: number): void {
+    if (newPage >= 1 && newPage <= this.lastPage && newPage !== this.currentPage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.currentPage = newPage;
+      this.loadUserView();
+    }
   }
 }
