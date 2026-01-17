@@ -1,3 +1,4 @@
+
 @if(loading){
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
   @for(i of [1,2,3]; track i) {
@@ -60,3 +61,29 @@
   </a>
   }
 </div>
+
+@if (!loading && lastPage > 1) {
+  <div class="flex justify-center items-center mt-12 gap-4">
+    
+    <button
+      (click)="changePage(currentPage - 1)"
+      [disabled]="currentPage === 1"
+      class="px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg enabled:hover:bg-blue-600 enabled:hover:text-white dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+    >
+      &larr;
+    </button>
+
+    <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">
+      Page <span class="text-gray-900 dark:text-white">{{ currentPage }}</span> of {{ lastPage }}
+    </span>
+
+    <button
+      (click)="changePage(currentPage + 1)"
+      [disabled]="currentPage === lastPage"
+      class="px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg enabled:hover:bg-blue-600 enabled:hover:text-white dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+    >
+      &rarr;
+    </button>
+
+  </div>
+}

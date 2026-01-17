@@ -18,8 +18,8 @@ export class PostService {
 
   constructor(private http: HttpClient) {}
 
-  getPosts(): Observable<PaginatedPosts> {
-    return this.http.get<PaginatedPosts>(`${this.baseUrl}/posts`);
+  getPosts(page: number = 1): Observable<PaginatedPosts> {
+    return this.http.get<PaginatedPosts>(`${this.baseUrl}/posts?page=${page}`);
   }
 
   getPostBySlug(slug: string): Observable<Post> {
