@@ -18,8 +18,8 @@ export class PostService {
 
   constructor(private http: HttpClient) {}
 
-  getPosts(): Observable<PaginatedPosts> {
-    return this.http.get<PaginatedPosts>(`${this.baseUrl}/posts`);
+  getPosts(page: number = 1): Observable<PaginatedPosts> {
+    return this.http.get<PaginatedPosts>(`${this.baseUrl}/posts?page=${page}`);
   }
 
   getPostBySlug(slug: string): Observable<Post> {
@@ -40,8 +40,8 @@ export class PostService {
     return this.http.post<{ url: string }>(`${this.baseUrl}/post/upload-image`, formData);
   }
 
-  getUserPosts(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/user/posts`);
+  getUserPosts(page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseUrl}/user/posts?page=${page}`);
   }
 
   updatePost(id: number, data: FormData): Observable<any> {

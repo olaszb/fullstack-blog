@@ -18,46 +18,46 @@
 
       <div class="flex items-center gap-4">
         @if (user$ | async; as user) {
-
-        <a
-          routerLink="/create-post"
-          routerLinkActive="ring-2 ring-offset-1 ring-blue-500"
-          class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-all shadow-sm"
-        >
-          <span>✏️</span>
-          <span class="hidden sm:inline">Write Post</span>
-        </a>
-
-        <div class="h-6 w-px bg-gray-300 mx-1"></div>
-
-        <div class="flex items-center gap-2">
-          <div class="text-right hidden md:block mr-2">
-            <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Signed in as</div>
-            <div class="text-sm font-semibold text-gray-900 leading-none">{{ user.name }}</div>
-          </div>
-
-          <button
-            (click)="logout()"
-            class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors"
-            title="Logout"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
+          @if(user.role !== 'admin'){
+            <a
+              routerLink="/create-post"
+              routerLinkActive="ring-2 ring-offset-1 ring-blue-500"
+              class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-all shadow-sm"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
-              />
-            </svg>
-          </button>
-        </div>
-
+              <span>✏️</span>
+              <span class="hidden sm:inline">Write Post</span>
+            </a>
+    
+            <div class="h-6 w-px bg-gray-300 mx-1"></div>
+    
+          }
+          <div class="flex items-center gap-2">
+            <div class="text-right hidden md:block mr-2">
+              <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Signed in as</div>
+              <div class="text-sm font-semibold text-gray-900 leading-none">{{ user.name }}</div>
+            </div>
+  
+            <button
+              (click)="logout()"
+              class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors"
+              title="Logout"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
+                />
+              </svg>
+            </button>
+          </div>
         } @else {
         <a
           routerLink="/login"
@@ -72,7 +72,7 @@
           Get Started
         </a>
         }
-
+        @if (user$ | async; as user) {
         <a
           routerLink="/user/posts"
           class="flex gap-2 p-2 text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors"
@@ -94,6 +94,7 @@
             />
           </svg>
         </a>
+      }
       </div>
     </div>
   </div>
