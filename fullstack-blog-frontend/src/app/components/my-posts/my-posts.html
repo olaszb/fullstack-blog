@@ -22,7 +22,8 @@
     <div class="mb-6 border-b border-gray-200 pb-2 flex justify-between items-end">
       <div>
         <h2 class="text-3xl font-bold text-gray-900">{{ group.authorName }}</h2>
-        <p class="text-gray-500 mt-1">{{ group.posts.length }} article(s)</p>
+        <span class="text-gray-500">Page {{currentPage}} | </span>
+        <span class="text-gray-500 mt-1">{{ group.posts.length }} article(s)</span>
       </div>
 
       @if(group.authorName === 'My Posts') {
@@ -156,3 +157,28 @@
   </div>
   }
 </div>
+@if (!loading && !isAdmin && lastPage > 1) {
+  <div class="flex justify-center items-center mt-12 gap-4 pb-10">
+    
+    <button
+      (click)="changePage(currentPage - 1)"
+      [disabled]="currentPage === 1"
+      class="px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:bg-blue-600 enabled:hover:text-white enabled:hover:dark:bg-gray-700"
+    >
+      &larr; 
+    </button>
+
+    <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">
+      Page <span class="text-gray-900 dark:text-white">{{ currentPage }}</span> of {{ lastPage }}
+    </span>
+
+    <button
+      (click)="changePage(currentPage + 1)"
+      [disabled]="currentPage === lastPage"
+      class="px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:bg-blue-600 enabled:hover:text-white enabled:hover:dark:bg-gray-700"
+    >
+      &rarr;
+    </button>
+
+  </div>
+}
